@@ -60,11 +60,12 @@ public class RestClient extends OAuthBaseClient {
 	 *    i.e client.get(apiUrl, params, handler);
 	 *    i.e client.post(apiUrl, params, handler);
 	 */
+
 	/* Sends a POST request to post a tweet. */
-	public void postTweet(String body, JsonHttpResponseHandler handler) {
+	public void publishTweet(String tweetContent, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
-		params.put("status", body);
-		client.post(apiUrl, String.valueOf(params), handler);
+		params.put("status", tweetContent);
+		client.post(apiUrl, params, "", handler);
 	}
 }
