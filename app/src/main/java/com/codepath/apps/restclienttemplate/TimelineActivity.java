@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -64,5 +65,11 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure! " + response, throwable);
             }
         });
+    }
+
+    /* Called when user taps the logout button. */
+    public void onLogoutButton(View view) {
+        client.clearAccessToken();
+        finish();
     }
 }
