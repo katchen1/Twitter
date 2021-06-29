@@ -1,10 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +68,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     // Define a view holder
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView ivProfileImage;
         TextView tvBody;
@@ -72,6 +76,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvRelativeTimestamp;
         RecyclerView rvImages;
         ImageView ivImage;
+        LinearLayout btnRow;
+        TextView tvName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -81,11 +87,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
             rvImages = itemView.findViewById(R.id.rvImages);
             ivImage = itemView.findViewById(R.id.ivImage);
+            btnRow = itemView.findViewById(R.id.btnRow);
+            tvName = itemView.findViewById(R.id.tvName);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
-            tvScreenName.setText(tweet.user.screenName);
+            tvName.setText(tweet.user.name);
+            tvScreenName.setText("@" + tweet.user.screenName);
             tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo());
             Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
 
@@ -93,10 +103,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             rvImages.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.HORIZONTAL, false));
             ImagesAdapter adapter = new ImagesAdapter(context, tweet.imageUrls);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnRow.getLayoutParams();
             rvImages.setAdapter(adapter);
             if (tweet.imageUrls.isEmpty()) {
                 rvImages.setVisibility(View.GONE);
                 ivImage.setVisibility(View.GONE);
+                params.addRule(RelativeLayout.BELOW, R.id.tvRelativeTimestamp);
             } else if (tweet.imageUrls.size() == 1) {
                 rvImages.setVisibility(View.GONE);
                 ivImage.setVisibility(View.VISIBLE);
@@ -104,9 +116,34 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                         .load(tweet.imageUrls.get(0))
                         .transform(new RoundedCornersTransformation(70, 15))
                         .into(ivImage);
+                params.addRule(RelativeLayout.BELOW, R.id.ivImage);
             } else {
                 ivImage.setVisibility(View.GONE);
                 rvImages.setVisibility(View.VISIBLE);
+                params.addRule(RelativeLayout.BELOW, R.id.rvImages);
+            }
+        }
+
+        /* Displays a new activity via an Intent when the user clicks on a row. */
+        @Override
+        public void onClick(View v) {
+            // Get the item's position
+            int position = getAdapterPosition();
+
+            // Ensure that the position is valid
+            if (position != RecyclerView.NO_POSITION) {
+
+                // Get the movie at the position
+                Tweet tweet = tweets.get(position);
+
+                // Create an intent for the new activity
+                Intent intent = new Intent(context, TweetDetailsActivity.class);
+
+                // Serialize the movie using parceler, use its short name as a key
+                intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
+
+                // Show the activity
+                context.startActivity(intent);
             }
         }
     }

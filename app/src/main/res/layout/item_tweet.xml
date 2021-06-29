@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="10dp">
 
     <ImageView
@@ -14,7 +14,21 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="0dp"
         android:layout_marginStart="0dp"
+        android:layout_marginEnd="5dp"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        tools:text="Katherine Chen" />
 
     <TextView
         android:id="@+id/tvScreenName"
@@ -23,9 +37,10 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@id/ivProfileImage"
-        android:text="TextView"
-        tools:text="kc.kc.kc" />
+        android:layout_toEndOf="@id/tvName"
+        tools:text="kc.kc.kc"
+        android:textSize="16sp"
+        android:textColor="@color/light_gray"/>
 
     <TextView
         android:id="@+id/tvBody"
@@ -35,6 +50,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@id/ivProfileImage"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         tools:text="This is my tweet!!" />
 
     <TextView
@@ -45,6 +62,8 @@
         android:layout_marginTop="2dp"
         android:layout_below="@id/tvBody"
         android:layout_toEndOf="@id/ivProfileImage"
+        android:textSize="16sp"
+        android:textColor="@color/light_gray"
         tools:text="8m" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -52,7 +71,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/ivProfileImage"
         android:layout_below="@id/tvRelativeTimestamp"
@@ -64,9 +82,107 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:layout_marginTop="2dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/ivProfileImage"
         android:layout_below="@id/tvRelativeTimestamp"
         android:layout_marginStart="5dp"/>
+
+    <LinearLayout
+        android:id="@+id/btnRow"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/ivProfileImage">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/light_gray"
+                android:src="@drawable/comment" />
+
+            <TextView
+                android:id="@+id/tvReplyCount"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:textColor="@color/light_gray"
+                android:text="0"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/light_gray"
+                android:src="@drawable/ic_vector_retweet_stroke" />
+
+            <TextView
+                android:id="@+id/tvRetweetCount"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/light_gray"
+                android:textSize="16sp"
+                android:text="0"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="4dp"
+                android:background="@android:color/transparent"
+                android:tint="@color/light_gray"
+                android:src="@drawable/ic_vector_heart_stroke" />
+
+            <TextView
+                android:id="@+id/tvLikeCount"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:textColor="@color/light_gray"
+                android:text="0"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:tint="@color/light_gray"
+            android:src="@drawable/share" />
+    </LinearLayout>
 </RelativeLayout>

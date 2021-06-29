@@ -42,6 +42,7 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        getSupportActionBar().setTitle("");
 
         client = RestApplication.getRestClient(this);
 
@@ -114,6 +115,9 @@ public class TimelineActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE);
             return true;
         }
+        if (item.getItemId() == R.id.logout) {
+            logout();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -154,7 +158,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     /* Called when user taps the logout button. */
-    public void onLogoutButton(View view) {
+    public void logout() {
         client.clearAccessToken();
         finish();
     }
