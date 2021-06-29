@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,7 +16,10 @@ import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -30,7 +34,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_tweet, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tweet, parent, false);
         return new ViewHolder(view);
     }
 
@@ -66,6 +70,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvBody;
         TextView tvScreenName;
         TextView tvRelativeTimestamp;
+        RecyclerView rvImages;
+        ImageView ivImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,13 +79,35 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
+            rvImages = itemView.findViewById(R.id.rvImages);
+            ivImage = itemView.findViewById(R.id.ivImage);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
             tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo());
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+            Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
+
+            // Horizontal scroll view for images
+            rvImages.setLayoutManager(new LinearLayoutManager(context,
+                    LinearLayoutManager.HORIZONTAL, false));
+            ImagesAdapter adapter = new ImagesAdapter(context, tweet.imageUrls);
+            rvImages.setAdapter(adapter);
+            if (tweet.imageUrls.isEmpty()) {
+                rvImages.setVisibility(View.GONE);
+                ivImage.setVisibility(View.GONE);
+            } else if (tweet.imageUrls.size() == 1) {
+                rvImages.setVisibility(View.GONE);
+                ivImage.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(tweet.imageUrls.get(0))
+                        .transform(new RoundedCornersTransformation(70, 15))
+                        .into(ivImage);
+            } else {
+                ivImage.setVisibility(View.GONE);
+                rvImages.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

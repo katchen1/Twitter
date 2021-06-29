@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -52,6 +53,8 @@ public class TimelineActivity extends AppCompatActivity {
         // Recycler view setup: layout manager and the adapter
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
+        DividerItemDecoration divider = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        rvTweets.addItemDecoration(divider);
         populateHomeTimeline();
 
         // Lookup the swipe container view

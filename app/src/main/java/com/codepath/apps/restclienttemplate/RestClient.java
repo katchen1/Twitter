@@ -49,6 +49,7 @@ public class RestClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
+		params.put("include_entities", true);
 		client.get(apiUrl, params, handler);
 	}
 

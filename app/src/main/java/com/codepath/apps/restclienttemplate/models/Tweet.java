@@ -14,13 +14,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.SimpleTimeZone;
 
 @Parcel
 public class Tweet {
 
 	public String body;
 	public String createdAt;
+	public List<String> imageUrls;
 	public User user;
 
 	public Tweet() {} // empty constructor needed by the Parceler library
@@ -30,6 +30,13 @@ public class Tweet {
 		tweet.body = jsonObject.getString("text");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+		tweet.imageUrls = new ArrayList<>();
+		if (jsonObject.has("extended_entities")) {
+			JSONArray mediaObjects = jsonObject.getJSONObject("extended_entities").getJSONArray("media");
+			for (int i = 0; i < mediaObjects.length(); i++) {
+				tweet.imageUrls.add(mediaObjects.getJSONObject(i).getString("media_url_https"));
+			}
+		}
 		return tweet;
 	}
 
