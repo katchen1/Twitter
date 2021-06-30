@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.activities;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
+import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import okhttp3.Headers;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeDialogFragment.ComposeDialogListener {
 
     public static final String TAG = "TimelineActivity";
     public static final int COMPOSE_REQUEST_CODE = 1;
@@ -185,10 +186,10 @@ public class TimelineActivity extends AppCompatActivity {
     /* Handles what happens when different icons in the menu bar are clicked. */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Compose icon: navigate to the compose activity
         if (item.getItemId() == R.id.compose) {
-            Intent intent = new Intent(this, ComposeActivity.class);
-            startActivityForResult(intent, COMPOSE_REQUEST_CODE);
+            FragmentManager fm = getSupportFragmentManager();
+            ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", null, COMPOSE_REQUEST_CODE);
+            composeDialogFragment.show(fm, "fragment_compose");
             return true;
         }
 
@@ -238,5 +239,16 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.e(TAG, "onFailure! " + response, throwable);
             }
         });
+    }
+
+    @Override
+    public void onFinishComposeDialog(Tweet tweet, int requestCode) {
+        tweets.add(0, tweet);
+        adapter.notifyItemInserted(0);
+        if (requestCode == COMPOSE_REQUEST_CODE) {
+            rvTweets.smoothScrollToPosition(0); // scroll back to top
+        } else if (requestCode == REPLY_REQUEST_CODE) {
+            Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
+        }
     }
 }

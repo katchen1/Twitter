@@ -12,18 +12,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
-import com.codepath.apps.restclienttemplate.activities.ComposeActivity;
 import com.codepath.apps.restclienttemplate.activities.TweetDetailsActivity;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-
-import org.json.JSONException;
 import org.parceler.Parcels;
 import java.util.List;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -79,6 +79,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     /* Defines a view holder. */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        public final int REPLY_REQUEST_CODE = 2;
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
@@ -117,9 +118,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 public void onClick(View view) {
                     // Compose a tweet and pass in the tweet being replied to
                     Tweet tweet = tweets.get(getAdapterPosition());
-                    Intent i = new Intent(context, ComposeActivity.class);
-                    i.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
-                    ((Activity) context).startActivityForResult(i, REPLY_REQUEST_CODE);
+                    FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+                    ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", tweet, REPLY_REQUEST_CODE);
+                    composeDialogFragment.show(fm, "fragment_compose");
                 }
             });
 

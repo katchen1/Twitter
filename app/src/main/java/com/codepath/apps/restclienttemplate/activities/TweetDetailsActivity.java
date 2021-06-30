@@ -1,9 +1,8 @@
 package com.codepath.apps.restclienttemplate.activities;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,21 +12,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.ImagesAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-
 import org.parceler.Parcels;
-
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import okhttp3.Headers;
 
-public class TweetDetailsActivity extends AppCompatActivity {
+public class TweetDetailsActivity extends AppCompatActivity implements ComposeDialogFragment.ComposeDialogListener {
 
     public final int RADIUS = 70;
     public final int MARGIN = 15;
@@ -119,9 +117,13 @@ public class TweetDetailsActivity extends AppCompatActivity {
     // When the reply button is clicked
     public void replyOnClick(View view) {
         // Compose a tweet and pass in the tweet being replied to
-        Intent i = new Intent(this, ComposeActivity.class);
-        i.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
-        startActivityForResult(i, REPLY_REQUEST_CODE);
+        //Intent i = new Intent(this, ComposeActivity.class);
+        //i.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
+        //startActivityForResult(i, REPLY_REQUEST_CODE);
+
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", tweet, REPLY_REQUEST_CODE);
+        composeDialogFragment.show(fm, "fragment_compose");
     }
 
     // When the retweet button is clicked
@@ -186,5 +188,12 @@ public class TweetDetailsActivity extends AppCompatActivity {
         intent.putExtra("tweet", Parcels.wrap(tweet));
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onFinishComposeDialog(Tweet tweet, int requestCode) {
+        if (requestCode == REPLY_REQUEST_CODE) {
+            Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
+        }
     }
 }
