@@ -1,6 +1,6 @@
-# Project 3 - *Name of App Here*
+# Project 3 - *SimpleTwitter*
 
-**Name of your app** is an android app that allows a user to view their Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
+**SimpleTwitter** is an android app that allows a user to view their Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
 Time spent: **X** hours spent in total
 
@@ -29,9 +29,9 @@ The following **optional** features are implemented:
   * [x] User that wrote the original tweet is **automatically "@" replied in compose**
 * [x] User can tap a tweet to **open a detailed tweet view**
   * [x] User can **take favorite (and unfavorite) or retweet** actions on a tweet
-* [ ] User can view more tweets as they scroll with infinite pagination
-* [ ] Compose tweet functionality is built using modal overlay
-* [ ] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
+* [x] User can view more tweets as they scroll with infinite pagination
+* [x] Compose tweet functionality is built using modal overlay
+* [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [ ] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.org/android/Drawables#vector-drawables) where appropriate.
 * [ ] User can view following / followers list through any profile they view.
 * [ ] Use the View Binding library to reduce view boilerplate.
@@ -55,6 +55,8 @@ GIF created with [Kap](https://getkap.co/).
 Describe any challenges encountered while building the app.
 
 * Tried to nest a horizontal images ListView inside the vertical tweets RecyclerView. Realized that ListViews are vertical; easier to nest another RecyclerView. Referred to https://section.io/engineering-education/android-nested-recycler-view/ for implementing nested RecyclerViews.
+* Cannot access each tweet's reply count from the Twitter API because the key "reply_count" within the JSON tweet object is only available with the Premium and Enterprise tier products.
+
 
 ## Open-source libraries used
 
