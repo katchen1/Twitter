@@ -16,6 +16,8 @@ import com.bumptech.glide.request.target.Target;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.activities.TweetDetailsActivity;
 import com.codepath.apps.restclienttemplate.activities.UserDetailsActivity;
+import com.codepath.apps.restclienttemplate.databinding.ActivityUserDetailsBinding;
+import com.codepath.apps.restclienttemplate.databinding.ItemFollowerBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 
@@ -42,8 +44,8 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_follower, parent, false);
-        return new ViewHolder(view);
+        ItemFollowerBinding binding = ItemFollowerBinding.inflate(LayoutInflater.from(context));
+        return new ViewHolder(binding);
     }
 
     /* Fill in the ImageView's image based on the position of the image. */
@@ -65,14 +67,14 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
         TextView tvScreenName;
         TextView tvDescription;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            tvName = itemView.findViewById(R.id.tvName);
-            ivVerified = itemView.findViewById(R.id.ivVerified);
-            tvScreenName = itemView.findViewById(R.id.tvScreenName);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
-            itemView.setOnClickListener(this);
+        public ViewHolder(ItemFollowerBinding binding) {
+            super(binding.getRoot());
+            ivProfileImage = binding.ivProfileImage;
+            tvName = binding.tvName;
+            ivVerified = binding.ivVerified;
+            tvScreenName = binding.tvScreenName;
+            tvDescription = binding.tvDescription;
+            binding.getRoot().setOnClickListener(this);
         }
 
         public void bind(User follower) {

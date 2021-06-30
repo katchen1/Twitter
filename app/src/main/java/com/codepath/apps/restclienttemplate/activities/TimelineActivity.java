@@ -19,6 +19,8 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.databinding.ActivityFollowersBinding;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.json.JSONArray;
@@ -35,39 +37,41 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     public static final int REPLY_REQUEST_CODE = 2;
     public static final int DETAILS_REQUEST_CODE = 3;
     RestClient client;
-    RecyclerView rvTweets;
+    //RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
-    SwipeRefreshLayout swipeContainer;
+    //SwipeRefreshLayout swipeContainer;
     MenuItem miActionProgressItem;
     private EndlessRecyclerViewScrollListener scrollListener;
+    ActivityTimelineBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        binding = ActivityTimelineBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        //setContentView(R.layout.activity_timeline);
         getSupportActionBar().setTitle("");
         client = RestApplication.getRestClient(this);
 
         // Set up the recycler view and its adapter
-        rvTweets = findViewById(R.id.rvTweets);
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvTweets.setLayoutManager(linearLayoutManager);
-        ((SimpleItemAnimator) rvTweets.getItemAnimator()).setSupportsChangeAnimations(false);
-        rvTweets.setAdapter(adapter);
+        binding.rvTweets.setLayoutManager(linearLayoutManager);
+        ((SimpleItemAnimator) binding.rvTweets.getItemAnimator()).setSupportsChangeAnimations(false);
+        binding.rvTweets.setAdapter(adapter);
 
         // Add a divider between items in the recycler view
         DividerItemDecoration divider = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        rvTweets.addItemDecoration(divider);
+        binding.rvTweets.addItemDecoration(divider);
 
         // Initial fetch of tweets
         populateHomeTimeline();
 
         // Setup the swipe refresh listener which triggers new data loading
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        //swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchTimelineAsync();
@@ -75,7 +79,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         });
 
         // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(
+        binding.swipeContainer.setColorSchemeResources(
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -90,7 +94,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
                 loadNextDataFromApi(page);
             }
         };
-        rvTweets.addOnScrollListener(scrollListener);
+        binding.rvTweets.addOnScrollListener(scrollListener);
 
         // 1. First, clear the array of data
         tweets.clear();
@@ -143,7 +147,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
                     // Update the list with the newly fetched tweets and notify the adapter
                     adapter.clear();
                     adapter.addAll(Tweet.fromJsonArray(jsonArray));
-                    swipeContainer.setRefreshing(false);
+                    binding.swipeContainer.setRefreshing(false);
                 } catch (JSONException e) {
                     // Log the error
                     Log.e(TAG, "Json exception", e);
@@ -210,7 +214,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             tweets.add(0, tweet);
             adapter.notifyItemInserted(0);
-            rvTweets.smoothScrollToPosition(0); // scroll back to top
+            binding.rvTweets.smoothScrollToPosition(0); // scroll back to top
         } else if (requestCode == DETAILS_REQUEST_CODE && resultCode == RESULT_OK) {
             populateHomeTimeline();
         }
@@ -246,7 +250,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         tweets.add(0, tweet);
         adapter.notifyItemInserted(0);
         if (requestCode == COMPOSE_REQUEST_CODE) {
-            rvTweets.smoothScrollToPosition(0); // scroll back to top
+            binding.rvTweets.smoothScrollToPosition(0); // scroll back to top
         } else if (requestCode == REPLY_REQUEST_CODE) {
             Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
         }

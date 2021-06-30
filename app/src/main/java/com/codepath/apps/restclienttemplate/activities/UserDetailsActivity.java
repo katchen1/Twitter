@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
+import com.codepath.apps.restclienttemplate.databinding.ActivityUserDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.R;
 
@@ -20,34 +22,23 @@ public class UserDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_details);
+        ActivityUserDetailsBinding binding = ActivityUserDetailsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         user = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        ImageView ivProfileBanner = findViewById(R.id.ivProfileBanner);
-        ImageView ivProfileImage = findViewById(R.id.ivProfileImage);
-        TextView tvName = findViewById(R.id.tvName);
-        ImageView ivVerified = findViewById(R.id.ivVerified);
-        TextView tvScreenName = findViewById(R.id.tvScreenName);
-        TextView tvDescription = findViewById(R.id.tvDescription);
-        TextView tvLocation = findViewById(R.id.tvLocation);
-        TextView tvUrl = findViewById(R.id.tvUrl);
-        TextView tvCreatedAt = findViewById(R.id.tvCreatedAt);
-        TextView tvFollowingCount = findViewById(R.id.tvFollowingCount);
-        TextView tvFollowerCount = findViewById(R.id.tvFollowerCount);
-
         if (!user.profileBannerUrl.isEmpty())
-            Glide.with(this).load(user.profileBannerUrl).into(ivProfileBanner);
-        Glide.with(this).load(user.profileImageUrl).circleCrop().into(ivProfileImage);
-        tvName.setText(user.name);
-        if (user.verified) ivVerified.setImageDrawable(getResources().getDrawable(R.drawable.twitter));
-        tvScreenName.setText("@" + user.screenName);
-        tvDescription.setText(user.description);
-        tvLocation.setText(user.location);
-        tvUrl.setText(user.url);
-        tvCreatedAt.setText(user.createdAt);
-        tvFollowingCount.setText(user.friendsCount.toString());
-        tvFollowerCount.setText(user.followerCount.toString());
+            Glide.with(this).load(user.profileBannerUrl).into(binding.ivProfileBanner);
+        Glide.with(this).load(user.profileImageUrl).circleCrop().into(binding.ivProfileImage);
+        binding.tvName.setText(user.name);
+        if (user.verified) binding.ivVerified.setImageDrawable(getResources().getDrawable(R.drawable.twitter));
+        binding.tvScreenName.setText("@" + user.screenName);
+        binding.tvDescription.setText(user.description);
+        binding.tvLocation.setText(user.location);
+        binding.tvUrl.setText(user.url);
+        binding.tvCreatedAt.setText(user.createdAt);
+        binding.tvFollowingCount.setText(user.friendsCount.toString());
+        binding.tvFollowerCount.setText(user.followerCount.toString());
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -62,10 +53,8 @@ public class UserDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         };
-        tvFollowerCount.setOnClickListener(listener);
-        tvFollowingCount.setOnClickListener(listener);
-
-
+        binding.tvFollowerCount.setOnClickListener(listener);
+        binding.tvFollowingCount.setOnClickListener(listener);
     }
 
     @Override

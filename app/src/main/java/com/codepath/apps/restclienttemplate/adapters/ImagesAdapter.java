@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.databinding.ItemFollowerBinding;
+import com.codepath.apps.restclienttemplate.databinding.ItemImageBinding;
+
 import java.util.List;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
@@ -29,8 +32,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_image, parent, false);
-        return new ViewHolder(view);
+        ItemImageBinding binding = ItemImageBinding.inflate(LayoutInflater.from(context));
+        return new ViewHolder(binding);
     }
 
     /* Fill in the ImageView's image based on the position of the image. */
@@ -51,9 +54,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     /* Defines a view holder for the image in the recycler view. */
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImage;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ivImage = itemView.findViewById(R.id.ivImage);
+        public ViewHolder(ItemImageBinding binding) {
+            super(binding.getRoot());
+            ivImage = binding.ivImage;
         }
     }
 }

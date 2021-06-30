@@ -3,6 +3,7 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.FollowersAdapter;
+import com.codepath.apps.restclienttemplate.databinding.ActivityFollowersBinding;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +24,6 @@ public class FollowersActivity extends AppCompatActivity {
 
     public final String TAG = "FollowersActivity";
     RestClient client;
-    RecyclerView rvFollowers;
     List<String> followerIds;
     List<User> followers;
     FollowersAdapter adapter;
@@ -32,7 +32,10 @@ public class FollowersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_followers);
+        //setContentView(R.layout.activity_followers);
+
+        ActivityFollowersBinding binding = ActivityFollowersBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         getSupportActionBar().setTitle("");
         client = RestApplication.getRestClient(this);
@@ -40,18 +43,17 @@ public class FollowersActivity extends AppCompatActivity {
         User user = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         String mode = getIntent().getStringExtra("mode");
 
-        rvFollowers = findViewById(R.id.rvFollowers);
         followers = new ArrayList<>();
         followerIds = new ArrayList<>();
         startIndex = 0;
         adapter = new FollowersAdapter(this, followers);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvFollowers.setLayoutManager(linearLayoutManager);
-        rvFollowers.setAdapter(adapter);
+        binding.rvFollowers.setLayoutManager(linearLayoutManager);
+        binding.rvFollowers.setAdapter(adapter);
 
         // Add a divider between items in the recycler view
         DividerItemDecoration divider = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        rvFollowers.addItemDecoration(divider);
+        binding.rvFollowers.addItemDecoration(divider);
 
         System.out.println("HIHIHI " + mode);
         client.getFollowers(mode, user.idStr, new JsonHttpResponseHandler() {

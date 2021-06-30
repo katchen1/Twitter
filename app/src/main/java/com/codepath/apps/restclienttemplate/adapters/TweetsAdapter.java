@@ -22,6 +22,8 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.activities.TweetDetailsActivity;
+import com.codepath.apps.restclienttemplate.databinding.ItemImageBinding;
+import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.parceler.Parcels;
@@ -49,8 +51,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tweet, parent, false);
-        return new ViewHolder(view);
+        ItemTweetBinding binding = ItemTweetBinding.inflate(LayoutInflater.from(context));
+        return new ViewHolder(binding);
     }
 
     /* Bind values of the tweet view based on the tweet's position in the list. */
@@ -95,21 +97,21 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvRetweetCount;
 
         /* Constructor gets the components of the tweet view. */
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            tvBody = itemView.findViewById(R.id.tvBody);
-            tvScreenName = itemView.findViewById(R.id.tvScreenName);
-            tvRelativeTimestamp = itemView.findViewById(R.id.tvRelativeTimestamp);
-            rvImages = itemView.findViewById(R.id.rvImages);
-            ivImage = itemView.findViewById(R.id.ivImage);
-            btnRow = itemView.findViewById(R.id.btnRow);
-            tvName = itemView.findViewById(R.id.tvName);
-            imgBtnReply = itemView.findViewById(R.id.imgBtnReply);
-            imgBtnFavorite = itemView.findViewById(R.id.imgBtnFavorite);
-            imgBtnRetweet = itemView.findViewById(R.id.imgBtnRetweet);
-            tvFavoriteCount = itemView.findViewById(R.id.tvFavoriteCount);
-            tvRetweetCount = itemView.findViewById(R.id.tvRetweetCount);
+        public ViewHolder(ItemTweetBinding binding) {
+            super(binding.getRoot());
+            ivProfileImage = binding.ivProfileImage;
+            tvBody = binding.tvBody;
+            tvScreenName = binding.tvScreenName;
+            tvRelativeTimestamp = binding.tvRelativeTimestamp;
+            rvImages = binding.rvImages;
+            ivImage = binding.ivImage;
+            btnRow = binding.btnRow;
+            tvName = binding.tvName;
+            imgBtnReply = binding.imgBtnReply;
+            imgBtnFavorite = binding.imgBtnFavorite;
+            imgBtnRetweet = binding.imgBtnRetweet;
+            tvFavoriteCount = binding.tvFavoriteCount;
+            tvRetweetCount = binding.tvRetweetCount;
             itemView.setOnClickListener(this);
 
             // When the reply button is clicked

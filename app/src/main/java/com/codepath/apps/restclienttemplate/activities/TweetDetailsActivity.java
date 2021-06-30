@@ -20,6 +20,8 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.ImagesAdapter;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -34,59 +36,38 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
     public final String TAG = "TweetDetailsActivity";
     public final int REPLY_REQUEST_CODE = 2;
     public final int USER_DETAIL_REQUEST_CODE = 4;
-    ImageView ivProfileImage;
-    TextView tvName, tvScreenName, tvBody;
-    RecyclerView rvImages;
-    ImageView ivImage;
-    TextView tvRetweetCount, tvFavoriteCount;
-    TextView tvCreatedAt;
-    View vDivider1;
-    LinearLayout statsRow;
     Tweet tweet;
-    ImageButton imgBtnRetweet, imgBtnFavorite;
     int position;
+    ActivityTweetDetailsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_details);
+        binding = ActivityTweetDetailsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getSupportActionBar().setTitle("");
 
         tweet = Parcels.unwrap(getIntent().getParcelableExtra(Tweet.class.getSimpleName()));
         position = getIntent().getIntExtra("position", -1);
 
-        ivProfileImage = findViewById(R.id.ivProfileImage);
-        tvName = findViewById(R.id.tvName);
-        tvScreenName = findViewById(R.id.tvScreenName);
-        tvBody = findViewById(R.id.tvBody);
-        rvImages = findViewById(R.id.rvImages);
-        ivImage = findViewById(R.id.ivImage);
-        tvRetweetCount = findViewById(R.id.tvRetweetCount);
-        tvFavoriteCount = findViewById(R.id.tvFavoriteCount);
-        tvCreatedAt = findViewById(R.id.tvCreatedAt);
-        vDivider1 = findViewById(R.id.vDivider1);
-        statsRow = findViewById(R.id.statsRow);
-        imgBtnRetweet = findViewById(R.id.imgBtnRetweet);
-        imgBtnFavorite = findViewById(R.id.imgBtnFavorite);
-
-        Glide.with(this).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
-        tvName.setText(tweet.user.name);
-        tvScreenName.setText("@" + tweet.user.screenName);
-        tvBody.setText(tweet.body);
-        tvRetweetCount.setText(tweet.retweetCount.toString());
-        tvFavoriteCount.setText(tweet.favoriteCount.toString());
-        tvCreatedAt.setText(tweet.getCreatedAt());
+        Glide.with(this).load(tweet.user.profileImageUrl).circleCrop().into(binding.ivProfileImage);
+        binding.tvName.setText(tweet.user.name);
+        binding.tvScreenName.setText("@" + tweet.user.screenName);
+        binding.tvBody.setText(tweet.body);
+        binding.tvRetweetCount.setText(tweet.retweetCount.toString());
+        binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
+        binding.tvCreatedAt.setText(tweet.getCreatedAt());
 
         int favoriteIcon = tweet.favorited? R.drawable.ic_vector_heart: R.drawable.ic_vector_heart_stroke;
         int retweetIcon = tweet.retweeted? R.drawable.ic_vector_retweet: R.drawable.ic_vector_retweet_stroke;
-        imgBtnFavorite.setImageResource(favoriteIcon);
-        imgBtnRetweet.setImageResource(retweetIcon);
+        binding.imgBtnFavorite.setImageResource(favoriteIcon);
+        binding.imgBtnRetweet.setImageResource(retweetIcon);
 
         // Populate the images view based on the number of images embedded in the tweet
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvCreatedAt.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.tvCreatedAt.getLayoutParams();
         if (tweet.imageUrls.isEmpty()) {
-            rvImages.setVisibility(View.GONE);
-            ivImage.setVisibility(View.GONE);
+            binding.rvImages.setVisibility(View.GONE);
+            binding.ivImage.setVisibility(View.GONE);
             params.addRule(RelativeLayout.BELOW, R.id.tvBody);
         } else if (tweet.imageUrls.size() == 1) {
             bindSingleImageView(tweet);
@@ -99,31 +80,27 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
 
     /* Handles binding when the tweet has exactly one image. */
     private void bindSingleImageView(Tweet tweet) {
-        rvImages.setVisibility(View.GONE);
-        ivImage.setVisibility(View.VISIBLE);
+        binding.rvImages.setVisibility(View.GONE);
+        binding.ivImage.setVisibility(View.VISIBLE);
         Glide.with(this)
                 .load(tweet.imageUrls.get(0))
                 .transform(new RoundedCornersTransformation(RADIUS, MARGIN))
-                .into(ivImage);
+                .into(binding.ivImage);
     }
 
     /* Handles binding when the tweet has more than one image. */
     private void bindMultiImageView(Tweet tweet) {
-        ivImage.setVisibility(View.GONE);
-        rvImages.setVisibility(View.VISIBLE);
-        rvImages.setLayoutManager(new LinearLayoutManager(this,
+        binding.ivImage.setVisibility(View.GONE);
+        binding.rvImages.setVisibility(View.VISIBLE);
+        binding.rvImages.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
         ImagesAdapter adapter = new ImagesAdapter(this, tweet.imageUrls);
-        rvImages.setAdapter(adapter);
+        binding.rvImages.setAdapter(adapter);
     }
 
     // When the reply button is clicked
     public void replyOnClick(View view) {
         // Compose a tweet and pass in the tweet being replied to
-        //Intent i = new Intent(this, ComposeActivity.class);
-        //i.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
-        //startActivityForResult(i, REPLY_REQUEST_CODE);
-
         FragmentManager fm = getSupportFragmentManager();
         ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", tweet, REPLY_REQUEST_CODE);
         composeDialogFragment.show(fm, "fragment_compose");
@@ -132,20 +109,20 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
     // When the retweet button is clicked
     public void retweetOnClick(View view) {
         // retweet or un-retweet the tweet
-        RestClient client = RestApplication.getRestClient(imgBtnFavorite.getContext());
+        RestClient client = RestApplication.getRestClient(binding.imgBtnFavorite.getContext());
         client.retweet(tweet.idStr, tweet.retweeted, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 if (tweet.retweeted) {
                     tweet.retweetCount--;
                     tweet.retweeted = false;
-                    imgBtnRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
+                    binding.imgBtnRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
                 } else {
                     tweet.retweetCount++;
                     tweet.retweeted = true;
-                    imgBtnRetweet.setImageResource(R.drawable.ic_vector_retweet);
+                    binding.imgBtnRetweet.setImageResource(R.drawable.ic_vector_retweet);
                 }
-                tvRetweetCount.setText(tweet.retweetCount.toString());
+                binding.tvRetweetCount.setText(tweet.retweetCount.toString());
             }
 
             @Override
@@ -164,13 +141,13 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
                 if (tweet.favorited) {
                     tweet.favoriteCount--;
                     tweet.favorited = false;
-                    imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart_stroke);
+                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart_stroke);
                 } else {
                     tweet.favoriteCount++;
                     tweet.favorited = true;
-                    imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart);
+                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart);
                 }
-                tvFavoriteCount.setText(tweet.favoriteCount.toString());
+                binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
             }
 
             @Override
