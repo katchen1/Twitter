@@ -1,12 +1,15 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
+
+import java.util.List;
 
 /*
  * 
@@ -90,5 +93,26 @@ public class RestClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("id", tweetIdStr);
 		client.post(apiUrl, params, "", handler);
+	}
+
+	/* Sends a GET request to retrieve followers or friends of a user. */
+	public void getFollowers(String mode, String userIdStr, JsonHttpResponseHandler handler) {
+		String path = mode.equals("follower") ? "followers/ids.json": "friends/ids.json";
+		String apiUrl = getApiUrl(path);
+		RequestParams params = new RequestParams();
+		params.put("user_id", userIdStr);
+		client.get(apiUrl, params, handler);
+	}
+
+	/* Sends a GET request to retrieve followers or friends of a user. */
+	public void lookupUsers(List<String> userIdStrs, JsonHttpResponseHandler handler) {
+		String path = "users/lookup.json";
+		String apiUrl = getApiUrl(path);
+		RequestParams params = new RequestParams();
+
+		// A comma separated list of screen names, up to 100 are allowed in a single request.
+		// You are strongly encouraged to use a POST for larger (up to 100 screen names) requests.
+		params.put("user_id", TextUtils.join(",", userIdStrs));
+		client.get(apiUrl, params, handler);
 	}
 }

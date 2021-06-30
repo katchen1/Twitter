@@ -3,6 +3,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,24 @@ public class UserDetailsActivity extends AppCompatActivity {
         tvCreatedAt.setText(user.createdAt);
         tvFollowingCount.setText(user.friendsCount.toString());
         tvFollowerCount.setText(user.followerCount.toString());
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(UserDetailsActivity.this, FollowersActivity.class);
+                i.putExtra("user", Parcels.wrap(user));
+                if (view.getId() == R.id.tvFollowerCount) {
+                    i.putExtra("mode", "follower");
+                } else if (view.getId() == R.id.tvFollowingCount) {
+                    i.putExtra("mode", "following");
+                }
+                startActivity(i);
+            }
+        };
+        tvFollowerCount.setOnClickListener(listener);
+        tvFollowingCount.setOnClickListener(listener);
+
+
     }
 
     @Override
