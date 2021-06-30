@@ -72,4 +72,22 @@ public class RestClient extends OAuthBaseClient {
 		}
 		client.post(apiUrl, params, "", handler);
 	}
+
+	/* Sends a POST request to favorite or un-favorite a tweet. */
+	public void favorite(String tweetIdStr, Boolean tweetFavorited, JsonHttpResponseHandler handler) {
+		String path = tweetFavorited? "favorites/destroy.json": "favorites/create.json";
+		String apiUrl = getApiUrl(path);
+		RequestParams params = new RequestParams();
+		params.put("id", tweetIdStr);
+		client.post(apiUrl, params, "", handler);
+	}
+
+	/* Sends a POST request to retweet or un-retweet a tweet. */
+	public void retweet(String tweetIdStr, Boolean tweetRetweeted, JsonHttpResponseHandler handler) {
+		String path = tweetRetweeted? "statuses/unretweet.json": "statuses/retweet.json";
+		String apiUrl = getApiUrl(path);
+		RequestParams params = new RequestParams();
+		params.put("id", tweetIdStr);
+		client.post(apiUrl, params, "", handler);
+	}
 }

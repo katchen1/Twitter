@@ -61,7 +61,6 @@ public class ComposeActivity extends AppCompatActivity {
 
                 // Make an API call to Twitter to publish the tweet
                 String replyId = finalReplyTweet == null? "": finalReplyTweet.idStr;
-                if (finalReplyTweet != null) System.out.println("ASDF: " + finalReplyTweet.idStr);
                 client.publishTweet(tweetContent, replyId, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {

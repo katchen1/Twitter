@@ -130,6 +130,7 @@
             android:layout_weight="1">
 
             <ImageButton
+                android:id="@+id/imgBtnRetweet"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
@@ -156,6 +157,7 @@
             android:layout_weight="1">
 
             <ImageButton
+                android:id="@+id/imgBtnFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
@@ -166,7 +168,7 @@
                 android:src="@drawable/ic_vector_heart_stroke" />
 
             <TextView
-                android:id="@+id/tvLikeCount"
+                android:id="@+id/tvFavoriteCount"
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

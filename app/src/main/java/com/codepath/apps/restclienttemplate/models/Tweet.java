@@ -23,6 +23,10 @@ public class Tweet {
 	public String createdAt;
 	public List<String> imageUrls;
 	public User user;
+	public Boolean favorited;
+	public Boolean retweeted;
+	public Integer favoriteCount;
+	public Integer retweetCount;
 
 	public Tweet() {} // empty constructor needed by the Parceler library
 
@@ -31,6 +35,10 @@ public class Tweet {
 		tweet.idStr = jsonObject.getString("id_str");
 		tweet.body = jsonObject.getString("text");
 		tweet.createdAt = jsonObject.getString("created_at");
+		tweet.favorited = jsonObject.getBoolean("favorited");
+		tweet.retweeted = jsonObject.getBoolean("retweeted");
+		tweet.favoriteCount = jsonObject.getInt("favorite_count");
+		tweet.retweetCount = jsonObject.getInt("retweet_count");
 		tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
 		tweet.imageUrls = new ArrayList<>();
 		if (jsonObject.has("extended_entities")) {

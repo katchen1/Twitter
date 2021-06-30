@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        ((SimpleItemAnimator) rvTweets.getItemAnimator()).setSupportsChangeAnimations(false);
         rvTweets.setAdapter(adapter);
 
         // Add a divider between items in the recycler view
