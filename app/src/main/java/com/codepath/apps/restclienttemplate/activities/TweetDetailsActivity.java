@@ -1,4 +1,5 @@
 package com.codepath.apps.restclienttemplate.activities;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.ImagesAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.parceler.Parcels;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -31,6 +33,7 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
     public final int MARGIN = 15;
     public final String TAG = "TweetDetailsActivity";
     public final int REPLY_REQUEST_CODE = 2;
+    public final int USER_DETAIL_REQUEST_CODE = 4;
     ImageView ivProfileImage;
     TextView tvName, tvScreenName, tvBody;
     RecyclerView rvImages;
@@ -195,5 +198,21 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         if (requestCode == REPLY_REQUEST_CODE) {
             Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void userOnClick(View view) {
+        Intent i = new Intent(TweetDetailsActivity.this, UserDetailsActivity.class);
+        i.putExtra("user", Parcels.wrap(tweet.user));
+        startActivityForResult(i, USER_DETAIL_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // Get tweet from the intent and update the recycler view with the tweet
+        if (requestCode == USER_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
+            User user = Parcels.unwrap(data.getParcelableExtra("user"));
+            tweet.user = user;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

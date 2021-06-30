@@ -26,7 +26,8 @@
         android:textStyle="bold"
         android:layout_toEndOf="@id/ivProfileImage"
         android:layout_alignParentTop="true"
-        tools:text="Katherine Chen" />
+        tools:text="Katherine Chen"
+        android:onClick="userOnClick"/>
 
     <TextView
         android:id="@+id/tvScreenName"
@@ -37,7 +38,8 @@
         android:textSize="16sp"
         android:layout_toEndOf="@id/ivProfileImage"
         android:layout_below="@id/tvName"
-        tools:text="kc.kc.kc" />
+        tools:text="kc.kc.kc"
+        android:onClick="userOnClick"/>
 
     <TextView
         android:id="@+id/tvBody"
