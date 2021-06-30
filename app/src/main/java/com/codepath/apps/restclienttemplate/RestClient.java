@@ -43,12 +43,13 @@ public class RestClient extends OAuthBaseClient {
 	}
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here
-	public void getHomeTimeline(JsonHttpResponseHandler handler) {
+	public void getHomeTimeline(String maxIdStr, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
 		params.put("include_entities", true);
+		if (!maxIdStr.isEmpty()) params.put("max_id", maxIdStr);
 		client.get(apiUrl, params, handler);
 	}
 
