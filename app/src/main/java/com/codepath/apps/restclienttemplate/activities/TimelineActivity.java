@@ -29,6 +29,7 @@ public class TimelineActivity extends AppCompatActivity {
     public static final String TAG = "TimelineActivity";
     public static final int COMPOSE_REQUEST_CODE = 1;
     public static final int REPLY_REQUEST_CODE = 2;
+    public static final int DETAILS_REQUEST_CODE = 3;
     RestClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -154,6 +155,8 @@ public class TimelineActivity extends AppCompatActivity {
             tweets.add(0, tweet);
             adapter.notifyItemInserted(0);
             rvTweets.smoothScrollToPosition(0); // scroll back to top
+        } else if (requestCode == DETAILS_REQUEST_CODE && resultCode == RESULT_OK) {
+            populateHomeTimeline();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -166,6 +169,7 @@ public class TimelineActivity extends AppCompatActivity {
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     // Add the tweets to the list and notify the adapter of the change
+                    adapter.clear();
                     adapter.addAll(Tweet.fromJsonArray(jsonArray));
                 } catch (JSONException e) {
                     // Log the error

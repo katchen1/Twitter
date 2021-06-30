@@ -34,6 +34,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public final int RADIUS = 70;
     public final int MARGIN = 15;
     public final int REPLY_REQUEST_CODE = 2;
+    public final int DETAILS_REQUEST_CODE = 3;
     public final String TAG = "TweetsAdapter";
     Context context;
     List<Tweet> tweets;
@@ -238,7 +239,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 // Navigate to the details activity and pass in the tweet
                 Intent intent = new Intent(context, TweetDetailsActivity.class);
                 intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
-                context.startActivity(intent);
+                intent.putExtra("position", position);
+                ((Activity) context).startActivityForResult(intent, DETAILS_REQUEST_CODE);
             }
         }
     }

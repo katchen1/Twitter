@@ -12,6 +12,7 @@ import org.parceler.Parcel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -72,5 +73,22 @@ public class Tweet {
 			Log.e("Tweet", "error getting relative time ago");
 		}
 		return relativeDate;
+	}
+
+	public String getCreatedAt() {
+		String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+		String shownFormat = "hh:mmaa MM/dd/yy";
+		SimpleDateFormat sfTwitter = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+		SimpleDateFormat sfShown = new SimpleDateFormat(shownFormat, Locale.ENGLISH);
+		sfTwitter.setLenient(true);
+		sfShown.setLenient(true);
+		String output = "";
+		try {
+			Date date = sfTwitter.parse(createdAt);
+			output = sfShown.format(date);
+		} catch (ParseException e) {
+			Log.e("Tweet", "error parsing created at");
+		}
+		return output;
 	}
 }

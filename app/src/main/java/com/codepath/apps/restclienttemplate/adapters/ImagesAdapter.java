@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.codepath.apps.restclienttemplate.R;
 import java.util.List;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -39,6 +40,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         Glide.with(context)
                 .load(imageUrl)
                 .transform(new RoundedCornersTransformation(RADIUS, MARGIN))
+                .override(Target.SIZE_ORIGINAL)
                 .into(holder.ivImage);
     }
 

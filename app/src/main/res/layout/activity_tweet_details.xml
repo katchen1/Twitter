@@ -1,9 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.TweetDetailsActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:layout_alignParentTop="true"
+        tools:text="Katherine Chen" />
+
+    <TextView
+        android:id="@+id/tvScreenName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/light_gray"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:layout_below="@id/tvName"
+        tools:text="kc.kc.kc" />
+
+    <TextView
+        android:id="@+id/tvBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/ivProfileImage"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvImages"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/ivProfileImage"
+        android:layout_below="@id/tvBody"/>
+
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/tvBody"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/tvCreatedAt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rvImages"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/light_gray"
+        android:text="3:34PM 9/8/20"
+        android:layout_margin="10dp"
+        android:textSize="16sp"/>
+
+    <View
+        android:id="@+id/vDivider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tvCreatedAt"
+        android:background="@color/light_gray"/>
+
+    <LinearLayout
+        android:id="@+id/statsRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/vDivider1"
+        android:layout_margin="10dp"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/tvRetweetCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="52"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RETWEETS"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/light_gray"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvFavoriteCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="15"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FAVORITES"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/light_gray"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vDivider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/statsRow"
+        android:background="@color/light_gray"/>
+
+    <LinearLayout
+        android:id="@+id/btnRow"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_margin="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/vDivider2">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:tint="@color/light_gray"
+            android:src="@drawable/comment"
+            android:onClick="replyOnClick"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnRetweet"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:tint="@color/light_gray"
+            android:src="@drawable/ic_vector_retweet_stroke"
+            android:onClick="retweetOnClick"/>
+
+        <ImageButton
+            android:id="@+id/imgBtnFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:tint="@color/light_gray"
+            android:src="@drawable/ic_vector_heart_stroke"
+            android:onClick="favoriteOnClick"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:tint="@color/light_gray"
+            android:src="@drawable/share"
+            android:onClick="shareOnClick"/>
+    </LinearLayout>
+</RelativeLayout>
