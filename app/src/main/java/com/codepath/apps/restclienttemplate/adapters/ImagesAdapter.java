@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,22 +7,24 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.R;
 import java.util.List;
-
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
+    private final int RADIUS = 70;
+    private final int MARGIN = 15;
     Context context;
     List<String> imageUrls;
 
-    // Pass in the context and list of image urls
+    /* Constructor takes in the context and list of image urls. */
     public ImagesAdapter(Context context, List<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
     }
 
-    // For each row, inflate the layout
+    /* For each image item, inflate the layout. */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,26 +32,23 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
-    // Bind values based on the position of the element
+    /* Fill in the ImageView's image based on the position of the image. */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Get the data at position
         String imageUrl = imageUrls.get(position);
-        // Bind the image url with the view holder
         Glide.with(context)
                 .load(imageUrl)
-                .transform(new RoundedCornersTransformation(70, 15))
+                .transform(new RoundedCornersTransformation(RADIUS, MARGIN))
                 .into(holder.ivImage);
     }
 
+    /* Returns how many items are in the list of images. */
     @Override
     public int getItemCount() { return imageUrls.size(); }
 
-    // Define a view holder
+    /* Defines a view holder for the image in the recycler view. */
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView ivImage;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.ivImage);

@@ -18,6 +18,7 @@ import java.util.Locale;
 @Parcel
 public class Tweet {
 
+	public String idStr;
 	public String body;
 	public String createdAt;
 	public List<String> imageUrls;
@@ -27,6 +28,7 @@ public class Tweet {
 
 	public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
 		Tweet tweet = new Tweet();
+		tweet.idStr = jsonObject.getString("id_str");
 		tweet.body = jsonObject.getString("text");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
