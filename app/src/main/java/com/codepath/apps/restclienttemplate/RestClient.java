@@ -46,13 +46,13 @@ public class RestClient extends OAuthBaseClient {
 	}
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here
-	public void getHomeTimeline(String maxIdStr, JsonHttpResponseHandler handler) {
+	public void getHomeTimeline(Long maxId, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
 		params.put("include_entities", true);
-		if (!maxIdStr.isEmpty()) params.put("max_id", maxIdStr);
+		if (maxId != -1) params.put("max_id", maxId.toString());
 		client.get(apiUrl, params, handler);
 	}
 
@@ -66,53 +66,52 @@ public class RestClient extends OAuthBaseClient {
 	 */
 
 	/* Sends a POST request to post a tweet. */
-	public void publishTweet(String tweetContent, String replyIdStr, JsonHttpResponseHandler handler) {
+	public void publishTweet(String tweetContent, Long replyId, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
-		if (!replyIdStr.isEmpty()) {
-			params.put("in_reply_to_status_id", replyIdStr);
+		if (replyId != -1) {
+			params.put("in_reply_to_status_id", replyId.toString());
 			params.put("auto_populate_reply_metadata", true);
 		}
 		client.post(apiUrl, params, "", handler);
 	}
 
 	/* Sends a POST request to favorite or un-favorite a tweet. */
-	public void favorite(String tweetIdStr, Boolean tweetFavorited, JsonHttpResponseHandler handler) {
+	public void favorite(Long tweetId, Boolean tweetFavorited, JsonHttpResponseHandler handler) {
 		String path = tweetFavorited? "favorites/destroy.json": "favorites/create.json";
 		String apiUrl = getApiUrl(path);
 		RequestParams params = new RequestParams();
-		params.put("id", tweetIdStr);
+		params.put("id", tweetId.toString());
 		client.post(apiUrl, params, "", handler);
 	}
 
 	/* Sends a POST request to retweet or un-retweet a tweet. */
-	public void retweet(String tweetIdStr, Boolean tweetRetweeted, JsonHttpResponseHandler handler) {
+	public void retweet(Long tweetId, Boolean tweetRetweeted, JsonHttpResponseHandler handler) {
 		String path = tweetRetweeted? "statuses/unretweet.json": "statuses/retweet.json";
 		String apiUrl = getApiUrl(path);
 		RequestParams params = new RequestParams();
-		params.put("id", tweetIdStr);
+		params.put("id", tweetId.toString());
 		client.post(apiUrl, params, "", handler);
 	}
 
 	/* Sends a GET request to retrieve followers or friends of a user. */
-	public void getFollowers(String mode, String userIdStr, JsonHttpResponseHandler handler) {
-		String path = mode.equals("follower") ? "followers/ids.json": "friends/ids.json";
+	public void getFollowers(String mode, Long userId, JsonHttpResponseHandler handler) {
+		String path = mode.equals("Followers") ? "followers/ids.json": "friends/ids.json";
 		String apiUrl = getApiUrl(path);
 		RequestParams params = new RequestParams();
-		params.put("user_id", userIdStr);
+		params.put("user_id", userId.toString());
 		client.get(apiUrl, params, handler);
 	}
 
-	/* Sends a GET request to retrieve followers or friends of a user. */
-	public void lookupUsers(List<String> userIdStrs, JsonHttpResponseHandler handler) {
+	/* Sends a GET request to retrieve followers or friends of a user.
+	 * Takes in a comma-separated list of ids, up to 100 are allowed in a single request.
+	 * Strongly encouraged to use a POST for larger (up to 100 ids) rather than smaller requests. */
+	public void lookupUsers(List<Long> userIds, JsonHttpResponseHandler handler) {
 		String path = "users/lookup.json";
 		String apiUrl = getApiUrl(path);
 		RequestParams params = new RequestParams();
-
-		// A comma separated list of screen names, up to 100 are allowed in a single request.
-		// You are strongly encouraged to use a POST for larger (up to 100 screen names) requests.
-		params.put("user_id", TextUtils.join(",", userIdStrs));
+		params.put("user_id", TextUtils.join(",", userIds));
 		client.get(apiUrl, params, handler);
 	}
 }

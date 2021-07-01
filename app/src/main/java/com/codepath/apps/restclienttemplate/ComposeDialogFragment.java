@@ -25,7 +25,7 @@ public class ComposeDialogFragment extends DialogFragment {
     private Button btnTweet;
 
     public interface ComposeDialogListener {
-        void onFinishComposeDialog(Tweet tweet, int requestCode);
+        void onFinishComposeDialog(Tweet tweet);
     }
 
     public ComposeDialogFragment() {
@@ -84,7 +84,7 @@ public class ComposeDialogFragment extends DialogFragment {
                 }
 
                 // Make an API call to Twitter to publish the tweet
-                String replyId = replyTweet == null? "": replyTweet.idStr;
+                Long replyId = replyTweet == null? (long) -1: replyTweet.id;
                 RestClient client = RestApplication.getRestClient(getContext());
                 client.publishTweet(tweetContent, replyId, new JsonHttpResponseHandler() {
                     @Override
@@ -93,7 +93,7 @@ public class ComposeDialogFragment extends DialogFragment {
                             // Pass the new tweet back and close the activity
                             Tweet tweet = Tweet.fromJson(json.jsonObject);
                             ComposeDialogListener listener = (ComposeDialogListener) getActivity();
-                            listener.onFinishComposeDialog(tweet, requestCode);
+                            listener.onFinishComposeDialog(tweet);
                             // Close the dialog and return back to the parent activity
                             dismiss();
                         } catch (JSONException e) {

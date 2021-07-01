@@ -5,42 +5,30 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
+import com.codepath.apps.restclienttemplate.Constants;
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.activities.TweetDetailsActivity;
 import com.codepath.apps.restclienttemplate.activities.UserDetailsActivity;
-import com.codepath.apps.restclienttemplate.databinding.ActivityUserDetailsBinding;
 import com.codepath.apps.restclienttemplate.databinding.ItemFollowerBinding;
-import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
-
 import org.parceler.Parcels;
-
 import java.util.List;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.ViewHolder> {
 
-    private final int RADIUS = 70;
-    private final int MARGIN = 15;
-    public final int USER_DETAIL_REQUEST_CODE = 4;
-    Context context;
-    List<User> followers;
+    private Context context;
+    private List<User> followers;
 
-    /* Constructor takes in the context and list of image urls. */
+    /* Constructor takes in the context and list of followers. */
     public FollowersAdapter(Context context, List<User> followers) {
         this.context = context;
         this.followers = followers;
     }
 
-    /* For each image item, inflate the layout. */
+    /* Inflates the view for each follower. */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,49 +36,45 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
         return new ViewHolder(binding);
     }
 
-    /* Fill in the ImageView's image based on the position of the image. */
+    /* Fills in the view based on the position of the user. */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User follower = followers.get(position);
         holder.bind(follower);
     }
 
-    /* Returns how many items are in the list of images. */
+    /* Returns how many items are in the followers list. */
     @Override
     public int getItemCount() { return followers.size(); }
 
     /* Defines a view holder for the image in the recycler view. */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView ivProfileImage;
-        TextView tvName;
-        ImageView ivVerified;
-        TextView tvScreenName;
-        TextView tvDescription;
+        ItemFollowerBinding binding;
 
+        /* Constructor takes in a view binding and stores it as a member variable. */
         public ViewHolder(ItemFollowerBinding binding) {
             super(binding.getRoot());
-            ivProfileImage = binding.ivProfileImage;
-            tvName = binding.tvName;
-            ivVerified = binding.ivVerified;
-            tvScreenName = binding.tvScreenName;
-            tvDescription = binding.tvDescription;
+            this.binding = binding;
             binding.getRoot().setOnClickListener(this);
         }
 
+        /* Binds the follower's data to the view. */
         public void bind(User follower) {
-            Glide.with(context).load(follower.profileImageUrl).circleCrop().into(ivProfileImage);
-            tvName.setText(follower.name);
-            if (follower.verified)
-                ivVerified.setImageDrawable(context.getResources().getDrawable(R.drawable.twitter));
-            tvScreenName.setText(follower.screenName);
-            tvDescription.setText(follower.description);
+            Glide.with(context).load(follower.profileImageUrl).circleCrop().into(binding.ivProfileImage);
+            binding.tvName.setText(follower.name);
+            binding.tvScreenName.setText(follower.screenName);
+            binding.tvDescription.setText(follower.description);
+            if (follower.verified) {
+                binding.ivVerified.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.twitter));
+            }
         }
 
+        /* When the follower is clicked, navigate to the user detail screen for the follower. */
         @Override
         public void onClick(View view) {
             Intent i = new Intent(context, UserDetailsActivity.class);
-            i.putExtra("user", Parcels.wrap(followers.get(getAdapterPosition())));
-            ((Activity) context).startActivityForResult(i, USER_DETAIL_REQUEST_CODE);
+            i.putExtra(Constants.USER_KEY_NAME, Parcels.wrap(followers.get(getAdapterPosition())));
+            ((Activity) context).startActivityForResult(i, Constants.USER_DETAIL_REQUEST_CODE);
         }
     }
 }

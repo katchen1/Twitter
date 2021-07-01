@@ -1,26 +1,21 @@
 package com.codepath.apps.restclienttemplate.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
-import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.databinding.ItemFollowerBinding;
+import com.codepath.apps.restclienttemplate.Constants;
 import com.codepath.apps.restclienttemplate.databinding.ItemImageBinding;
-
 import java.util.List;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
-    private final int RADIUS = 70;
-    private final int MARGIN = 15;
-    Context context;
-    List<String> imageUrls;
+    private Context context;
+    private List<String> imageUrls;
 
     /* Constructor takes in the context and list of image urls. */
     public ImagesAdapter(Context context, List<String> imageUrls) {
@@ -28,7 +23,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         this.imageUrls = imageUrls;
     }
 
-    /* For each image item, inflate the layout. */
+    /* Inflates the layout for each image item. */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,7 +37,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         String imageUrl = imageUrls.get(position);
         Glide.with(context)
                 .load(imageUrl)
-                .transform(new RoundedCornersTransformation(RADIUS, MARGIN))
+                .transform(new RoundedCornersTransformation(Constants.RADIUS, Constants.MARGIN))
                 .override(Target.SIZE_ORIGINAL)
                 .into(holder.ivImage);
     }

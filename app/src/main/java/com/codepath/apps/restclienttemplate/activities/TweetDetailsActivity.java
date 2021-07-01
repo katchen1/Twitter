@@ -1,63 +1,62 @@
 package com.codepath.apps.restclienttemplate.activities;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
+import com.codepath.apps.restclienttemplate.Constants;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.ImagesAdapter;
-import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
-import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.parceler.Parcels;
+import java.util.Locale;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import okhttp3.Headers;
 
 public class TweetDetailsActivity extends AppCompatActivity implements ComposeDialogFragment.ComposeDialogListener {
 
-    public final int RADIUS = 70;
-    public final int MARGIN = 15;
-    public final String TAG = "TweetDetailsActivity";
-    public final int REPLY_REQUEST_CODE = 2;
-    public final int USER_DETAIL_REQUEST_CODE = 4;
-    Tweet tweet;
-    int position;
-    ActivityTweetDetailsBinding binding;
+    private final String TAG = "TweetDetailsActivity";
+    private Tweet tweet; // The tweet being displayed
+    private int position; // Position of the tweet in the adapter
+    ActivityTweetDetailsBinding binding; // For view binding
+    RestClient client; // For making Twitter API calls
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Apply view binding to reduce view boilerplate
         binding = ActivityTweetDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        getSupportActionBar().setTitle("");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle("Tweet");
 
-        tweet = Parcels.unwrap(getIntent().getParcelableExtra(Tweet.class.getSimpleName()));
-        position = getIntent().getIntExtra("position", -1);
+        // Initialize member variables
+        tweet = Parcels.unwrap(getIntent().getParcelableExtra(Constants.TWEET_KEY_NAME));
+        position = getIntent().getIntExtra(Constants.POSITION_KEY_NAME, -1);
+        client = RestApplication.getRestClient(this);
 
+        // Populate the view's components
         Glide.with(this).load(tweet.user.profileImageUrl).circleCrop().into(binding.ivProfileImage);
-        binding.tvName.setText(tweet.user.name);
-        binding.tvScreenName.setText("@" + tweet.user.screenName);
+        binding.tvScreenName.setText(String.format(Locale.US,"@%s", tweet.user.screenName));
+        binding.tvRetweetCount.setText(String.format(Locale.US, "%d", tweet.retweetCount));
+        binding.tvFavoriteCount.setText(String.format(Locale.US, "%d", tweet.favoriteCount));
         binding.tvBody.setText(tweet.body);
-        binding.tvRetweetCount.setText(tweet.retweetCount.toString());
-        binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
+        binding.tvName.setText(tweet.user.name);
         binding.tvCreatedAt.setText(tweet.getCreatedAt());
 
+        // Determine the states of the retweeted and favorited icons
         int favoriteIcon = tweet.favorited? R.drawable.ic_baseline_favorite_24: R.drawable.ic_baseline_favorite_border_24;
         int retweetIcon = tweet.retweeted? R.drawable.ic_vector_retweet: R.drawable.ic_vector_retweet_stroke;
         binding.imgBtnFavorite.setImageResource(favoriteIcon);
@@ -84,7 +83,7 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         binding.ivImage.setVisibility(View.VISIBLE);
         Glide.with(this)
                 .load(tweet.imageUrls.get(0))
-                .transform(new RoundedCornersTransformation(RADIUS, MARGIN))
+                .transform(new RoundedCornersTransformation(Constants.RADIUS, Constants.MARGIN))
                 .into(binding.ivImage);
     }
 
@@ -98,19 +97,18 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         binding.rvImages.setAdapter(adapter);
     }
 
-    // When the reply button is clicked
+    /* When reply is clicked, compose a tweet and pass in the tweet being replied to. */
     public void replyOnClick(View view) {
-        // Compose a tweet and pass in the tweet being replied to
         FragmentManager fm = getSupportFragmentManager();
-        ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", tweet, REPLY_REQUEST_CODE);
-        composeDialogFragment.show(fm, "fragment_compose");
+        ComposeDialogFragment cdf;
+        cdf = ComposeDialogFragment.newInstance("Reply", tweet, Constants.REPLY_REQUEST_CODE);
+        cdf.show(fm, "fragment_reply");
     }
 
-    // When the retweet button is clicked
+    /* When retweet is clicked, retweet or un-retweet the tweet. */
     public void retweetOnClick(View view) {
-        // retweet or un-retweet the tweet
         RestClient client = RestApplication.getRestClient(binding.imgBtnFavorite.getContext());
-        client.retweet(tweet.idStr, tweet.retweeted, new JsonHttpResponseHandler() {
+        client.retweet(tweet.id, tweet.retweeted, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 if (tweet.retweeted) {
@@ -122,7 +120,7 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
                     tweet.retweeted = true;
                     binding.imgBtnRetweet.setImageResource(R.drawable.ic_vector_retweet);
                 }
-                binding.tvRetweetCount.setText(tweet.retweetCount.toString());
+                binding.tvRetweetCount.setText(String.format(Locale.US, "%d", tweet.retweetCount));
             }
 
             @Override
@@ -132,10 +130,9 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         });
     }
 
-    // When the favorite button is clicked
+    /* When the favorite button is clicked, favorite or un-favorite the tweet. */
     public void favoriteOnClick(View view) {
-        RestClient client = RestApplication.getRestClient(this);
-        client.favorite(tweet.idStr, tweet.favorited, new JsonHttpResponseHandler() {
+        client.favorite(tweet.id, tweet.favorited, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 if (tweet.favorited) {
@@ -147,7 +144,7 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
                     tweet.favorited = true;
                     binding.imgBtnFavorite.setImageResource(R.drawable.ic_baseline_favorite_24);
                 }
-                binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
+                binding.tvFavoriteCount.setText(String.format(Locale.US, "%d", tweet.retweetCount));
             }
 
             @Override
@@ -157,38 +154,39 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         });
     }
 
-    public void shareOnClick(View view) {
-
-    }
-
+    /* If back is pressed, return to the timeline activity and update the tweet. */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra("position", position);
-        intent.putExtra("tweet", Parcels.wrap(tweet));
+        intent.putExtra(Constants.POSITION_KEY_NAME, position);
+        intent.putExtra(Constants.TWEET_KEY_NAME, Parcels.wrap(tweet));
         setResult(RESULT_OK, intent);
         finish();
     }
 
+    /* If finish replying, return to the timeline and update both the tweet and the newly added tweet. */
     @Override
-    public void onFinishComposeDialog(Tweet tweet, int requestCode) {
-        if (requestCode == REPLY_REQUEST_CODE) {
-            Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
-        }
+    public void onFinishComposeDialog(Tweet t) {
+        Intent intent = new Intent();
+        intent.putExtra(Constants.POSITION_KEY_NAME, position);
+        intent.putExtra(Constants.TWEET_KEY_NAME, Parcels.wrap(tweet));
+        intent.putExtra(Constants.TWEET_ADDED_KEY_NAME, Parcels.wrap(t));
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
+    /* If the user of the tweet is clicked, view details of that user. */
     public void userOnClick(View view) {
         Intent i = new Intent(TweetDetailsActivity.this, UserDetailsActivity.class);
-        i.putExtra("user", Parcels.wrap(tweet.user));
-        startActivityForResult(i, USER_DETAIL_REQUEST_CODE);
+        i.putExtra(Constants.USER_KEY_NAME, Parcels.wrap(tweet.user));
+        startActivityForResult(i, Constants.USER_DETAIL_REQUEST_CODE);
     }
 
+    /* When coming back from a user detail activity, update the user that was passed back. */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        // Get tweet from the intent and update the recycler view with the tweet
-        if (requestCode == USER_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
-            User user = Parcels.unwrap(data.getParcelableExtra("user"));
-            tweet.user = user;
+        if (requestCode == Constants.USER_DETAIL_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            tweet.user = Parcels.unwrap(data.getParcelableExtra(Constants.USER_KEY_NAME));
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

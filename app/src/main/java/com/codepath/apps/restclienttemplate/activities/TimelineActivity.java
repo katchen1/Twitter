@@ -1,12 +1,12 @@
 package com.codepath.apps.restclienttemplate.activities;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,12 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.codepath.apps.restclienttemplate.ComposeDialogFragment;
+import com.codepath.apps.restclienttemplate.Constants;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.RestApplication;
 import com.codepath.apps.restclienttemplate.RestClient;
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
-import com.codepath.apps.restclienttemplate.databinding.ActivityFollowersBinding;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -32,135 +32,90 @@ import okhttp3.Headers;
 
 public class TimelineActivity extends AppCompatActivity implements ComposeDialogFragment.ComposeDialogListener {
 
-    public static final String TAG = "TimelineActivity";
-    public static final int COMPOSE_REQUEST_CODE = 1;
-    public static final int REPLY_REQUEST_CODE = 2;
-    public static final int DETAILS_REQUEST_CODE = 3;
-    RestClient client;
-    //RecyclerView rvTweets;
-    List<Tweet> tweets;
-    TweetsAdapter adapter;
-    //SwipeRefreshLayout swipeContainer;
-    MenuItem miActionProgressItem;
-    private EndlessRecyclerViewScrollListener scrollListener;
-    ActivityTimelineBinding binding;
+    private final String TAG = "TimelineActivity";
+    private ActivityTimelineBinding binding; // The view binding
+    private List<Tweet> tweets; // List of tweets shown in the timeline recycler view
+    private TweetsAdapter adapter; // Adapter for the recycler view
+    private RestClient client; // For making Twitter API calls
+    private MenuItem miActionProgressItem; // Shown when any background or network task is happening
+    private EndlessRecyclerViewScrollListener scrollListener; // For endless pagination
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // View binding to reduce view boilerplate
         binding = ActivityTimelineBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //setContentView(R.layout.activity_timeline);
-        getSupportActionBar().setTitle("");
-        client = RestApplication.getRestClient(this);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setTitle("");
 
-        // Set up the recycler view and its adapter
+        // Initialize member variables
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
+        client = RestApplication.getRestClient(this);
+
+        // Set up the timeline recycler view with divider between items
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rvTweets.setLayoutManager(linearLayoutManager);
-        ((SimpleItemAnimator) binding.rvTweets.getItemAnimator()).setSupportsChangeAnimations(false);
-        binding.rvTweets.setAdapter(adapter);
-
-        // Add a divider between items in the recycler view
         DividerItemDecoration divider = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         binding.rvTweets.addItemDecoration(divider);
+        binding.rvTweets.setAdapter(adapter);
+
+        // Remove the default on-change animations of the recycler view
+        SimpleItemAnimator animator = (SimpleItemAnimator) binding.rvTweets.getItemAnimator();
+        if (animator != null) animator.setSupportsChangeAnimations(false);
 
         // Initial fetch of tweets
-        populateHomeTimeline();
+        appendHomeTimeline((long) -1);
 
         // Setup the swipe refresh listener which triggers new data loading
-        //swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchTimelineAsync();
-            }
-        });
-
-        // Configure the refreshing colors
-        binding.swipeContainer.setColorSchemeResources(
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        binding.swipeContainer.setOnRefreshListener(this::refreshTimelineAsync);
+        binding.swipeContainer.setColorSchemeResources(R.color.twitter_blue);
 
         // Enable endless pagination on the recycler view
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi(page);
+                // Append older tweets to the bottom of the list
+                Long maxId = tweets.get(tweets.size() - 1).id - 1;
+                appendHomeTimeline(maxId);
+                scrollListener.resetState();
             }
         };
         binding.rvTweets.addOnScrollListener(scrollListener);
-
-        // 1. First, clear the array of data
-        tweets.clear();
-        // 2. Notify the adapter of the update
-        adapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
-        // 3. Reset endless scroll listener when performing a new search
-        scrollListener.resetState();
     }
 
-    // Append the next page of data into the adapter
-    // This method probably sends out a network request and appends new data items to your adapter.
-    public void loadNextDataFromApi(int offset) {
-        // Send an API request to retrieve appropriate paginated data
-        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
-        //  --> Deserialize and construct new model objects from the API response
-        //  --> Append the new data objects to the existing set of items inside the array of items
-        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
-        showProgressBar();
-        client.getHomeTimeline(tweets.get(tweets.size() - 1) .idStr, new JsonHttpResponseHandler() {
+    /* Fetches tweets in the user's timeline with ids limited to maxId or below.
+     * maxId is ignored is -1 is passed in. */
+    private void appendHomeTimeline(Long maxId) {
+        if (miActionProgressItem != null) showProgressBar();
+        client.getHomeTimeline(maxId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray jsonArray = json.jsonArray;
                 try {
-                    // Append the list with the newly fetched tweets and notify the adapter
-                    tweets.remove(tweets.size() - 1);
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
-                } catch (JSONException e) {
-                    // Log the error
-                    Log.e(TAG, "Json exception", e);
-                }
-                hideProgressBar();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                // Log the error
-                Log.e(TAG, "Fetch timeline error " + response, throwable);
-            }
-        });
-    }
-
-    /* Sends the network request to fetch the updated data. */
-    public void fetchTimelineAsync() {
-        showProgressBar();
-        client.getHomeTimeline("", new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                JSONArray jsonArray = json.jsonArray;
-                try {
-                    // Update the list with the newly fetched tweets and notify the adapter
-                    adapter.clear();
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
+                    // Add the tweets to the list and notify the adapter of the change
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    adapter.notifyDataSetChanged();
                     binding.swipeContainer.setRefreshing(false);
+                    if (miActionProgressItem != null) hideProgressBar();
                 } catch (JSONException e) {
-                    // Log the error
                     Log.e(TAG, "Json exception", e);
                 }
-                hideProgressBar();
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                // Log the error
-                Log.e(TAG, "Fetch timeline error " + response, throwable);
+                Log.e(TAG, "onFailure! " + response, throwable);
             }
         });
+    }
+
+    /* When the user pulls down to refresh, clear and re-fetch the timeline. */
+    public void refreshTimelineAsync() {
+        tweets.clear();
+        appendHomeTimeline((long) -1);
     }
 
     /* Adds items to the action bar and returns true for the menu to be displayed. */
@@ -170,7 +125,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         return true;
     }
 
-    /* Stores the instance of the menu item containing the progress loading indicator. */
+    /* Initializes the menu item containing the progress loading indicator. */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         miActionProgressItem = menu.findItem(R.id.miActionProgress);
@@ -190,11 +145,12 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     /* Handles what happens when different icons in the menu bar are clicked. */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Compose icon: open a compose modal overlay
         if (item.getItemId() == R.id.compose) {
             FragmentManager fm = getSupportFragmentManager();
-            ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title", null, COMPOSE_REQUEST_CODE);
-            composeDialogFragment.show(fm, "fragment_compose");
-            return true;
+            ComposeDialogFragment cdf;
+            cdf = ComposeDialogFragment.newInstance("Compose", null, Constants.COMPOSE_REQUEST_CODE);
+            cdf.show(fm, "fragment_compose");
         }
 
         // Logout icon: logout
@@ -208,51 +164,28 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     /* Handles the data passed back from calls to startActivityForResult. */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        // Get tweet from the intent and update the recycler view with the tweet
-        if ((requestCode == COMPOSE_REQUEST_CODE || requestCode == REPLY_REQUEST_CODE)
-                && resultCode == RESULT_OK) {
-            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
-            tweets.add(0, tweet);
-            adapter.notifyItemInserted(0);
-            binding.rvTweets.smoothScrollToPosition(0); // scroll back to top
-        } else if (requestCode == DETAILS_REQUEST_CODE && resultCode == RESULT_OK) {
-            populateHomeTimeline();
+        if (requestCode == Constants.TWEET_DETAIL_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Update the tweet whose details were shown
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra(Constants.TWEET_KEY_NAME));
+            int position = data.getIntExtra(Constants.POSITION_KEY_NAME, -1);
+            tweets.set(position, tweet);
+            adapter.notifyItemChanged(position);
+
+            // If the user replied to the tweet, insert the reply and scroll to top
+            if (data.hasExtra(Constants.TWEET_ADDED_KEY_NAME)) {
+                Tweet reply = Parcels.unwrap(data.getParcelableExtra(Constants.TWEET_ADDED_KEY_NAME));
+                onFinishComposeDialog(reply);
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /* Initial fetch of tweets on the user's timeline. */
-    private void populateHomeTimeline() {
-        client.getHomeTimeline("", new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                JSONArray jsonArray = json.jsonArray;
-                try {
-                    // Add the tweets to the list and notify the adapter of the change
-                    adapter.clear();
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
-                } catch (JSONException e) {
-                    // Log the error
-                    Log.e(TAG, "Json exception", e);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                // Log the error
-                Log.e(TAG, "onFailure! " + response, throwable);
-            }
-        });
-    }
-
+    /* When the user finishes composing, add it to the top. */
     @Override
-    public void onFinishComposeDialog(Tweet tweet, int requestCode) {
+    public void onFinishComposeDialog(Tweet tweet) {
         tweets.add(0, tweet);
         adapter.notifyItemInserted(0);
-        if (requestCode == COMPOSE_REQUEST_CODE) {
-            binding.rvTweets.smoothScrollToPosition(0); // scroll back to top
-        } else if (requestCode == REPLY_REQUEST_CODE) {
-            Toast.makeText(this, "Added tweet to timeline", Toast.LENGTH_SHORT).show();
-        }
+        binding.rvTweets.smoothScrollToPosition(0);
+        Toast.makeText(this, "Tweet added", Toast.LENGTH_SHORT).show();
     }
 }

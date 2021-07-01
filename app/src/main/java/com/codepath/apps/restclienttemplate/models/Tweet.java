@@ -1,39 +1,31 @@
-// models/Tweet.java
 package com.codepath.apps.restclienttemplate.models;
-import android.text.format.DateUtils;
-import android.util.Log;
-
-import androidx.room.Entity;
+import com.codepath.apps.restclienttemplate.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 @Parcel
 public class Tweet {
 
-	public String idStr;
-	public String body;
-	public String createdAt;
-	public List<String> imageUrls;
-	public User user;
-	public Boolean favorited;
-	public Boolean retweeted;
-	public Integer favoriteCount;
-	public Integer retweetCount;
+	public Long id; // The unique identifier of the tweet
+	public String body; // The text body
+	public String createdAt; // The time it was created (in ugly format)
+	public List<String> imageUrls; // A list of urls of the embedded images
+	public User user; // The user who wrote the tweet
+	public Boolean favorited; // Is it favorited by the logged in user
+	public Boolean retweeted; // Is it retweeted by the logged in user
+	public Integer favoriteCount; // How many people favorited it
+	public Integer retweetCount; // How many people retweeted it
 
 	public Tweet() {} // empty constructor needed by the Parceler library
 
+	/* Constructor - reads a JSON object and converts it to a tweet object. */
 	public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
 		Tweet tweet = new Tweet();
-		tweet.idStr = jsonObject.getString("id_str");
+		tweet.id = jsonObject.getLong("id");
 		tweet.body = jsonObject.getString("text");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.favorited = jsonObject.getBoolean("favorited");
@@ -51,6 +43,7 @@ public class Tweet {
 		return tweet;
 	}
 
+	/* Takes a JSON array and converts it to a list of tweet objects. */
 	public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
 		List<Tweet> tweets = new ArrayList<>();
 		for (int i = 0; i < jsonArray.length(); i++) {
@@ -59,36 +52,13 @@ public class Tweet {
 		return tweets;
 	}
 
+	/* Returns the relative time ago - used in the timeline activity. */
 	public String getRelativeTimeAgo() {
-		String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-		SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-		sf.setLenient(true);
-
-		String relativeDate = "";
-		try {
-			long dateMillis = sf.parse(createdAt).getTime();
-			relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-					System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-		} catch (ParseException e) {
-			Log.e("Tweet", "error getting relative time ago");
-		}
-		return relativeDate;
+		return Constants.convertTimeFormat(createdAt, Constants.twitterTimeFormat, "relative");
 	}
 
+	/* Returns the time the tweet was created in the form used by the tweets detail activity. */
 	public String getCreatedAt() {
-		String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-		String shownFormat = "hh:mmaa MM/dd/yy";
-		SimpleDateFormat sfTwitter = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-		SimpleDateFormat sfShown = new SimpleDateFormat(shownFormat, Locale.ENGLISH);
-		sfTwitter.setLenient(true);
-		sfShown.setLenient(true);
-		String output = "";
-		try {
-			Date date = sfTwitter.parse(createdAt);
-			output = sfShown.format(date);
-		} catch (ParseException e) {
-			Log.e("Tweet", "error parsing created at");
-		}
-		return output;
+		return Constants.convertTimeFormat(createdAt, Constants.twitterTimeFormat, Constants.myTimeFormat);
 	}
 }
