@@ -9,7 +9,6 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import org.json.JSONArray;
@@ -32,7 +31,6 @@ public class FollowersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_followers);
 
         ActivityFollowersBinding binding = ActivityFollowersBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -55,7 +53,6 @@ public class FollowersActivity extends AppCompatActivity {
         DividerItemDecoration divider = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
         binding.rvFollowers.addItemDecoration(divider);
 
-        System.out.println("HIHIHI " + mode);
         client.getFollowers(mode, user.idStr, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {

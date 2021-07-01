@@ -58,7 +58,7 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
         binding.tvCreatedAt.setText(tweet.getCreatedAt());
 
-        int favoriteIcon = tweet.favorited? R.drawable.ic_vector_heart: R.drawable.ic_vector_heart_stroke;
+        int favoriteIcon = tweet.favorited? R.drawable.ic_baseline_favorite_24: R.drawable.ic_baseline_favorite_border_24;
         int retweetIcon = tweet.retweeted? R.drawable.ic_vector_retweet: R.drawable.ic_vector_retweet_stroke;
         binding.imgBtnFavorite.setImageResource(favoriteIcon);
         binding.imgBtnRetweet.setImageResource(retweetIcon);
@@ -141,11 +141,11 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
                 if (tweet.favorited) {
                     tweet.favoriteCount--;
                     tweet.favorited = false;
-                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart_stroke);
+                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24);
                 } else {
                     tweet.favoriteCount++;
                     tweet.favorited = true;
-                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_vector_heart);
+                    binding.imgBtnFavorite.setImageResource(R.drawable.ic_baseline_favorite_24);
                 }
                 binding.tvFavoriteCount.setText(tweet.favoriteCount.toString());
             }

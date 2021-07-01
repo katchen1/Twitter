@@ -192,7 +192,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRetweetCount.setText(tweet.retweetCount.toString());
             tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo());
             Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
-            int favoriteIcon = tweet.favorited? R.drawable.ic_vector_heart: R.drawable.ic_vector_heart_stroke;
+            int favoriteIcon = tweet.favorited? R.drawable.ic_baseline_favorite_24: R.drawable.ic_baseline_favorite_border_24;
             imgBtnFavorite.setImageResource(favoriteIcon);
             int retweetIcon = tweet.retweeted? R.drawable.ic_vector_retweet: R.drawable.ic_vector_retweet_stroke;
             imgBtnRetweet.setImageResource(retweetIcon);
