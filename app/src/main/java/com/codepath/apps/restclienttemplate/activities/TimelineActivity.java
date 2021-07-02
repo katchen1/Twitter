@@ -47,8 +47,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         // View binding to reduce view boilerplate
         binding = ActivityTimelineBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setTitle("");
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setTitle("");
 
         // Initialize member variables
         tweets = new ArrayList<>();
