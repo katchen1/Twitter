@@ -5,7 +5,6 @@ import com.codepath.apps.restclienttemplate.adapters.FollowersAdapter;
 import com.codepath.apps.restclienttemplate.databinding.ActivityFollowersBinding;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;

@@ -14,9 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.json.JSONException;
-
 import java.util.Locale;
-
 import okhttp3.Headers;
 
 public class ComposeDialogFragment extends DialogFragment {
@@ -27,6 +25,7 @@ public class ComposeDialogFragment extends DialogFragment {
     private Button btnTweet;
     private static int requestCode;
 
+    /* Each compose dialog fragment should implement onFinishComposeDialog. */
     public interface ComposeDialogListener {
         void onFinishComposeDialog(Tweet tweet);
     }
@@ -64,7 +63,6 @@ public class ComposeDialogFragment extends DialogFragment {
         } else if (requestCode == Constants.REPLY_REQUEST_CODE) {
             etCompose.setHint("Tweet your reply");
         }
-
 
         // Fetch arguments from bundle and set title
         String title = "";

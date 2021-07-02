@@ -2,13 +2,11 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 import android.text.TextUtils;
-
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
-
 import java.util.List;
 
 /*
@@ -44,8 +42,9 @@ public class RestClient extends OAuthBaseClient {
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
+
+	/* Sends a GET request to retrieve the user's home timeline. maxId is the maximum (newest)
+	 * id of the tweet in the returned list, used for endless pagination. */
 	public void getHomeTimeline(Long maxId, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
@@ -56,15 +55,6 @@ public class RestClient extends OAuthBaseClient {
 		if (maxId != -1) params.put("max_id", maxId.toString());
 		client.get(apiUrl, params, handler);
 	}
-
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
 
 	/* Sends a POST request to post a tweet. */
 	public void publishTweet(String tweetContent, Long replyId, JsonHttpResponseHandler handler) {

@@ -1,4 +1,6 @@
 package com.codepath.apps.restclienttemplate.models;
+import com.codepath.apps.restclienttemplate.Constants;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,5 +57,10 @@ public class User {
 			users.add(fromJson(jsonArray.getJSONObject(i)));
 		}
 		return users;
+	}
+
+	/* Returns the join time in a nice format. */
+	public String getCreatedAt() {
+		return Constants.convertTimeFormat(createdAt, Constants.twitterTimeFormat, Constants.myTimeFormat);
 	}
 }

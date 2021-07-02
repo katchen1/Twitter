@@ -36,9 +36,7 @@ public class UserDetailsActivity extends AppCompatActivity {
         binding.tvDescription.setText(user.description);
         binding.tvLocation.setText(user.location);
         binding.tvUrl.setText(user.url);
-        String createdAt = "Joined " + Constants.convertTimeFormat(user.createdAt,
-                Constants.twitterTimeFormat, Constants.myTimeFormat);
-        binding.tvCreatedAt.setText(createdAt);
+        binding.tvCreatedAt.setText(String.format(Locale.US, "Joined %s", user.getCreatedAt()));
         binding.tvFollowingCount.setText(String.format(Locale.US, "%d", user.friendsCount));
         binding.tvFollowerCount.setText(String.format(Locale.US, "%d", user.followerCount));
         Glide.with(this).load(user.profileImageUrl).circleCrop().into(binding.ivProfileImage);

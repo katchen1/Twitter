@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/* This is a class for variables and static methods that are used throughout multiple activities. */
 public class Constants {
     public static final int COMPOSE_REQUEST_CODE = 1;
     public static final int REPLY_REQUEST_CODE = 2;
@@ -35,21 +36,17 @@ public class Constants {
                 output = DateUtils.getRelativeTimeSpanString(dateMillis,
                         System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
 
+                // Do some shortening
                 if (output.equals("Yesterday")) output = "1d";
                 if (output.contains(" hour")) {
-                    output = output.substring(0, output.indexOf(" hour"));
-                    output += "h";
+                    output = output.substring(0, output.indexOf(" hour")) + "h";
                 } else if (output.contains(" minute")) {
-                    output = output.substring(0, output.indexOf(" minute"));
-                    output += "m";
+                    output = output.substring(0, output.indexOf(" minute")) + "m";
                 } else if (output.contains(" day")) {
-                    output = output.substring(0, output.indexOf(" day"));
-                    output += "d";
+                    output = output.substring(0, output.indexOf(" day")) + "d";
                 } else if (output.contains(" second")) {
-                    output = output.substring(0, output.indexOf(" second"));
-                    output += "s";
+                    output = output.substring(0, output.indexOf(" second")) + "s";
                 }
-
             } else {
                 // Get string in desired format ex. "hh:mm MM/dd/yy"
                 SimpleDateFormat sf2 = new SimpleDateFormat(format2, Locale.ENGLISH);
@@ -58,7 +55,7 @@ public class Constants {
                 output = sf2.format(date);
             }
         } catch (ParseException e) {
-            Log.e("TAG", "Error in time conversion", e);
+            Log.e("TAG", "Error in time format conversion", e);
         }
         return output;
     }
