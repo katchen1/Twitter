@@ -2,15 +2,20 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/logout"
-        android:icon="@drawable/twitter"
-        android:title="Item"
+<!--    <item-->
+<!--        android:id="@+id/logout"-->
+<!--        android:icon="@drawable/ic_launcher_twitter_round"-->
+<!--        android:title="Item"-->
+<!--        app:showAsAction="always" />-->
+
+    <item android:id="@+id/logout"
+        android:title="LOGOUT"
+        android:iconTint="@color/white"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/compose"
-        android:icon="@drawable/ic_vector_compose"
+        android:icon="@drawable/vector_compose_fab"
         android:iconTint="#FFFFFF"
         android:title="Compose"
         app:showAsAction="always" />

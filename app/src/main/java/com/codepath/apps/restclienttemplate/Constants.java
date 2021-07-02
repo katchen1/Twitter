@@ -34,22 +34,22 @@ public class Constants {
                 long dateMillis = sf.parse(time).getTime();
                 output = DateUtils.getRelativeTimeSpanString(dateMillis,
                         System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-                if (output.endsWith("ago")) {
-                    if (output.contains(" hour")) {
-                        output = output.substring(0, output.indexOf(" hour"));
-                        output += "h";
-                    } else if (output.contains(" minute")) {
-                        output = output.substring(0, output.indexOf(" minute"));
-                        output += "m";
-                    } else if (output.contains(" day")) {
-                        output = output.substring(0, output.indexOf(" day"));
-                        output += "d";
-                    } else if (output.contains(" second")) {
-                        output = output.substring(0, output.indexOf(" second"));
-                        output += "s";
-                    }
-                }
+
                 if (output.equals("Yesterday")) output = "1d";
+                if (output.contains(" hour")) {
+                    output = output.substring(0, output.indexOf(" hour"));
+                    output += "h";
+                } else if (output.contains(" minute")) {
+                    output = output.substring(0, output.indexOf(" minute"));
+                    output += "m";
+                } else if (output.contains(" day")) {
+                    output = output.substring(0, output.indexOf(" day"));
+                    output += "d";
+                } else if (output.contains(" second")) {
+                    output = output.substring(0, output.indexOf(" second"));
+                    output += "s";
+                }
+
             } else {
                 // Get string in desired format ex. "hh:mm MM/dd/yy"
                 SimpleDateFormat sf2 = new SimpleDateFormat(format2, Locale.ENGLISH);

@@ -65,7 +65,9 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
             binding.tvScreenName.setText(follower.screenName);
             binding.tvDescription.setText(follower.description);
             if (follower.verified) {
-                binding.ivVerified.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.twitter));
+                binding.ivVerified.setVisibility(View.VISIBLE);
+            } else {
+                binding.ivVerified.setVisibility(View.INVISIBLE);
             }
         }
 

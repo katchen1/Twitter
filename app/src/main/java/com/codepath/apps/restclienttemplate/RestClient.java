@@ -75,6 +75,7 @@ public class RestClient extends OAuthBaseClient {
 			params.put("in_reply_to_status_id", replyId.toString());
 			params.put("auto_populate_reply_metadata", true);
 		}
+		params.put("tweet_mode", "extended");
 		client.post(apiUrl, params, "", handler);
 	}
 

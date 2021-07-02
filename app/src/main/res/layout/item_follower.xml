@@ -24,11 +24,14 @@
         android:textColor="@color/black"/>
 
     <ImageView
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
         android:id="@+id/ivVerified"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@id/tvName"/>
+        android:layout_toEndOf="@id/tvName"
+        android:background="@drawable/ic_verified"/>
 
     <TextView
         android:layout_width="wrap_content"
