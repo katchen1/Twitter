@@ -15,8 +15,10 @@ public class Constants {
     public static final String POSITION_KEY_NAME = "position";
     public static final String TWEET_ADDED_KEY_NAME = "tweetAdded";
     public static final String USER_KEY_NAME = "user";
+    public static final String TITLE_KEY_NAME = "title";
     public static final int RADIUS = 70;
     public static final int MARGIN = 15;
+    public static final int MAX_TWEET_LENGTH = 280;
     public static final String twitterTimeFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
     public static final String myTimeFormat = "hh:mmaa · MM/dd/yy";
 
@@ -32,6 +34,22 @@ public class Constants {
                 long dateMillis = sf.parse(time).getTime();
                 output = DateUtils.getRelativeTimeSpanString(dateMillis,
                         System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                if (output.endsWith("ago")) {
+                    if (output.contains(" hour")) {
+                        output = output.substring(0, output.indexOf(" hour"));
+                        output += "h";
+                    } else if (output.contains(" minute")) {
+                        output = output.substring(0, output.indexOf(" minute"));
+                        output += "m";
+                    } else if (output.contains(" day")) {
+                        output = output.substring(0, output.indexOf(" day"));
+                        output += "d";
+                    } else if (output.contains(" second")) {
+                        output = output.substring(0, output.indexOf(" second"));
+                        output += "s";
+                    }
+                }
+                if (output.equals("Yesterday")) output = "1d";
             } else {
                 // Get string in desired format ex. "hh:mm MM/dd/yy"
                 SimpleDateFormat sf2 = new SimpleDateFormat(format2, Locale.ENGLISH);

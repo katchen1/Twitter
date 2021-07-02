@@ -19,6 +19,7 @@ public class Tweet {
 	public Boolean retweeted; // Is it retweeted by the logged in user
 	public Integer favoriteCount; // How many people favorited it
 	public Integer retweetCount; // How many people retweeted it
+	public String inReplyToScreenName; // Which tweet is being replied to, null if none
 
 	public Tweet() {} // empty constructor needed by the Parceler library
 
@@ -26,7 +27,7 @@ public class Tweet {
 	public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
 		Tweet tweet = new Tweet();
 		tweet.id = jsonObject.getLong("id");
-		tweet.body = jsonObject.getString("text");
+		tweet.body = jsonObject.getString("full_text");
 		tweet.createdAt = jsonObject.getString("created_at");
 		tweet.favorited = jsonObject.getBoolean("favorited");
 		tweet.retweeted = jsonObject.getBoolean("retweeted");
@@ -34,6 +35,7 @@ public class Tweet {
 		tweet.retweetCount = jsonObject.getInt("retweet_count");
 		tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
 		tweet.imageUrls = new ArrayList<>();
+		tweet.inReplyToScreenName = jsonObject.getString("in_reply_to_screen_name");
 		if (jsonObject.has("extended_entities")) {
 			JSONArray mediaObjects = jsonObject.getJSONObject("extended_entities").getJSONArray("media");
 			for (int i = 0; i < mediaObjects.length(); i++) {

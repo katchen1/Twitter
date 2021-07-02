@@ -17,18 +17,33 @@
         android:layout_marginEnd="5dp"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tvName"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="0dp"
         android:layout_toEndOf="@id/ivProfileImage"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        tools:text="Katherine Chen" />
+        android:orientation="horizontal"
+        android:id="@+id/nameVerified">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            tools:text="Katherine Chen" />
+
+        <TextView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:id="@+id/ivVerified"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/ic_verified"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvScreenName"
@@ -37,7 +52,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@id/tvName"
+        android:layout_toEndOf="@id/nameVerified"
         tools:text="kc.kc.kc"
         android:textSize="16sp"
         android:textColor="@color/light_gray"/>
@@ -53,17 +68,18 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         android:autoLink="all"
+        android:textColorLink="@color/twitter_blue"
         android:linksClickable="true"
         tools:text="This is my tweet!!" />
 
     <TextView
         android:id="@+id/tvRelativeTimestamp"
+        android:background="@color/white"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="2dp"
-        android:layout_below="@id/tvBody"
-        android:layout_toEndOf="@id/ivProfileImage"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:textSize="16sp"
         android:textColor="@color/light_gray"
         tools:text="8m" />
@@ -75,7 +91,7 @@
         android:layout_marginTop="2dp"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/ivProfileImage"
-        android:layout_below="@id/tvRelativeTimestamp"
+        android:layout_below="@id/tvBody"
         android:layout_marginStart="5dp"/>
 
     <ImageView
@@ -86,7 +102,7 @@
         android:layout_marginTop="2dp"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/ivProfileImage"
-        android:layout_below="@id/tvRelativeTimestamp"
+        android:layout_below="@id/tvBody"
         android:layout_marginStart="5dp"/>
 
     <LinearLayout
@@ -95,7 +111,7 @@
         android:layout_height="20dp"
         android:orientation="horizontal"
         android:weightSum="3"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/ivProfileImage">
 
         <LinearLayout

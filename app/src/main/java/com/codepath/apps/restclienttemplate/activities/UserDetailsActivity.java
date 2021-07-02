@@ -36,16 +36,23 @@ public class UserDetailsActivity extends AppCompatActivity {
         binding.tvDescription.setText(user.description);
         binding.tvLocation.setText(user.location);
         binding.tvUrl.setText(user.url);
-        binding.tvCreatedAt.setText(user.createdAt);
+        String createdAt = "Joined " + Constants.convertTimeFormat(user.createdAt,
+                Constants.twitterTimeFormat, Constants.myTimeFormat);
+        binding.tvCreatedAt.setText(createdAt);
         binding.tvFollowingCount.setText(String.format(Locale.US, "%d", user.friendsCount));
         binding.tvFollowerCount.setText(String.format(Locale.US, "%d", user.followerCount));
         Glide.with(this).load(user.profileImageUrl).circleCrop().into(binding.ivProfileImage);
         if (!user.profileBannerUrl.isEmpty()) {
             Glide.with(this).load(user.profileBannerUrl).into(binding.ivProfileBanner);
         }
-        if (user.verified) {
-            binding.ivVerified.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.twitter));
-        }
+
+        // Things that can be gone if nonexistent
+        if (user.verified) binding.ivVerified.setVisibility(View.VISIBLE);
+        else binding.ivVerified.setVisibility(View.INVISIBLE);
+        if (user.location.length() > 0) binding.infoLocation.setVisibility(View.VISIBLE);
+        else binding.infoLocation.setVisibility(View.GONE);
+        if (!user.url.equals("null")) binding.infoUrl.setVisibility(View.VISIBLE);
+        else binding.tvUrl.setVisibility(View.GONE);
     }
 
     /* Goes back to the previous activity and pass in the updated user. */

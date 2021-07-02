@@ -82,13 +82,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         /* Binds the values of the tweet to the view holder's components. */
         public void bind(final Tweet tweet) {
-            binding.tvBody.setText(tweet.body);
             binding.tvName.setText(tweet.user.name);
             binding.tvRelativeTimestamp.setText(tweet.getRelativeTimeAgo());
             binding.tvScreenName.setText(String.format(Locale.US, "@%s", tweet.user.screenName));
             binding.tvFavoriteCount.setText(String.format(Locale.US, "%d", tweet.favoriteCount));
             binding.tvRetweetCount.setText(String.format(Locale.US, "%d", tweet.retweetCount));
             Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(binding.ivProfileImage);
+            if (tweet.user.verified) binding.ivVerified.setVisibility(View.VISIBLE);
+            else binding.ivVerified.setVisibility(View.INVISIBLE);
+
+            // Alter the body text based on whether or not it's a reply
+            String bodyText = tweet.body;
+            if (!tweet.inReplyToScreenName.equals("null")) {
+                bodyText = "Replying to @" + tweet.inReplyToScreenName + "\n\n";
+                if (tweet.body.startsWith("@"))
+                    bodyText += tweet.body.substring(tweet.inReplyToScreenName.length() + 1);
+                else
+                    bodyText += tweet.body;
+            }
+            binding.tvBody.setText(bodyText);
 
             // Button icon depends on whether or not the user favorited or retweeted the tweet
             int favoriteIcon = tweet.favorited? R.drawable.ic_baseline_favorite_24: R.drawable.ic_baseline_favorite_border_24;
@@ -101,7 +113,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             if (tweet.imageUrls.isEmpty()) {
                 binding.rvImages.setVisibility(View.GONE);
                 binding.ivImage.setVisibility(View.GONE);
-                params.addRule(RelativeLayout.BELOW, R.id.tvRelativeTimestamp);
+                params.addRule(RelativeLayout.BELOW, R.id.tvBody);
             } else if (tweet.imageUrls.size() == 1) {
                 bindSingleImageView(tweet);
                 params.addRule(RelativeLayout.BELOW, R.id.ivImage);

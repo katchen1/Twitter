@@ -55,6 +55,8 @@ public class TweetDetailsActivity extends AppCompatActivity implements ComposeDi
         binding.tvBody.setText(tweet.body);
         binding.tvName.setText(tweet.user.name);
         binding.tvCreatedAt.setText(tweet.getCreatedAt());
+        if (tweet.user.verified) binding.ivVerified.setVisibility(View.VISIBLE);
+        else binding.ivVerified.setVisibility(View.INVISIBLE);
 
         // Determine the states of the retweeted and favorited icons
         int favoriteIcon = tweet.favorited? R.drawable.ic_baseline_favorite_24: R.drawable.ic_baseline_favorite_border_24;

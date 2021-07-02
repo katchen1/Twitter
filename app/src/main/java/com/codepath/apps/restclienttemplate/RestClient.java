@@ -51,6 +51,7 @@ public class RestClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
+		params.put("tweet_mode", "extended");
 		params.put("include_entities", true);
 		if (maxId != -1) params.put("max_id", maxId.toString());
 		client.get(apiUrl, params, handler);
