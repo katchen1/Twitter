@@ -42,6 +42,7 @@ The following **additional** features are implemented:
 
 * [x] Added horizontal scroll view to display all images for tweets with more than one image
 * [x] The user detail view shows the user's profile with location (if any), website link (if any) and join date
+* [x] Clicking on users in a following / followersr list navigates to the profile of the user
 
 ## Video Walkthrough
 
